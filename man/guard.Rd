@@ -28,8 +28,9 @@ isa(type, argument)
 \arguments{
   \item{child.fn}{This is the function for which the guard is applied. It does
     not need to exist yet}
-  \item{condition}{The conditions for dispatching to this function. This must
-    be a function that returns a boolean value or can be a vector of functions }
+  \item{condition}{The conditions for dispatching to this function. This can 
+    either be an expression, a function, or vector of functions. See Details
+    for more information }
   \item{strict}{Whether strict matching of arguments should be used. See Details
     for more information}
   \item{fn}{The function to find guards for. If this is a child function, the
@@ -42,15 +43,30 @@ isa(type, argument)
   \item{argument}{The argument to match type with}
 }
 \details{
+Guards provide declarative dispatching of function variants consistent with the
+declarative style of functional programming. Using guards for dispatching
+has many benefits: function variants are self-contained and focus on a single
+task (separation of concerns), design-by-contract is inherent, data manipulation
+is separate from computational logic, self-documenting.
+
+To use the 'guard' function, first the abstract function must be declared
+with 'UseFunction'. All concrete variants are then guarded by a guard
+statement followed by the actual function definition. The guard statement
+tells futile.paradigm under what conditions this particular function variant
+should be called. This is defined by passing an expression to the guard
+function that operates on the arguments of the concrete function (see Examples).
+
 Guards are naturally scoped based on the number of arguments in a function.
 Hence only functions with the same number of arguments as were passed into the
-parent function will be considered for dispatching.
+parent function will be considered for dispatching. Guards can also be defined
+in a short-hand as an expression that is dynamically bound to the actual
+function implementation at run-time.
 
 When using strict guards (the default behavior) named arguments passed into the
 parent function must match the named arguments defined in the child function.
 Hence, dispatching is defined by both the number of arguments and the matching
 named arguments, which introduces a greater level of control in dispatching 
-than otherwise possible. In general, the built-in argument matching with Do
+than otherwise possible. In general, the built-in argument matching will Do
 the Right Thing w.r.t. unnamed arguments, although the first match will be the
 one applied, which could result in unexpected behavior if one is careless.
 
@@ -63,9 +79,12 @@ precondition plus any conditions defined by the guards. In certain circumstances
 this may be desired, although in general strict guards provides greater control.
 
 The order that the function guards are defined determines the order that 
-functions are evaluated for satisfaction of guard criteria. This is a detail
-that is important to understand as default functions defined too early will be
-greedy and no other criteria will be evaluated. 
+functions are evaluated for satisfaction of guard criteria. This behavior is
+typically called top-to-bottom, left-to-right evaluation. The left-to-right
+evaluation only applies to the explicit form when multiple function guards are
+defined in a vector. These details are important to understand as default 
+functions defined too early will be greedy and no other criteria will be 
+evaluated. 
 
 Another important consideration is that using the ellipsis argument is not 
 supported in futile.paradigm. This is by design as the functional programming
@@ -93,7 +112,7 @@ defined. This essentially shows the evaluation path that UseFunction will take.
 
 'isStrict' returns a logical value.
 
-'isa' returns a logical value.
+'isa' returns a logical value indicating whether a variable is an instance of class
 }
 
 \author{ Brian Lee Yung Rowe }
@@ -108,18 +127,24 @@ defined. This essentially shows the evaluation path that UseFunction will take.
 # using built-in R features.
 logarithm <- function(...) UseFunction('logarithm', ...)
 
+# Abbreviated form (recommended)
+# The expression must operate on arguments declared in the concrete function.
+guard(logarithm.1, is.numeric(x))
+logarithm.1 <- function(x) logarithm(x, exp(1))
+
+# Defaults are applied on a per-argument length basis
+guard(logarithm.default1, TRUE)
+logarithm.default1 <- function(x) logarithm(as.numeric(x))
+
+# Explicit form (only necessary for special cases)
 guard(logarithm.base, function(x,y) is.numeric(x) && is.numeric(y))
 logarithm.base <- function(x,y) log(x, base=y)
 
 guard(logarithm.default2, TRUE)
 logarithm.default2 <- function(x,y) logarithm(as.numeric(x), as.numeric(y))
 
-guard(logarithm.1, function(x) is.numeric(x))
-logarithm.1 <- function(x) logarithm(x, exp(1))
-
-# Defaults are applied on a per-argument length basis
-guard(logarithm.default1, TRUE)
-logarithm.default1 <- function(x) logarithm(as.numeric(x))
+# View the function variants for this abstract function
+guards(logarithm)
 
 }
 \keyword{ methods }
