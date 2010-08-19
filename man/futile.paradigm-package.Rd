@@ -16,8 +16,8 @@ reminiscent of Eiffel.
 \tabular{ll}{
 Package: \tab futile.paradigm\cr
 Type: \tab Package\cr
-Version: \tab 1.0.1\cr
-Date: \tab 2010-08-17\cr
+Version: \tab 1.0.2\cr
+Date: \tab 2010-08-19\cr
 License: \tab LGPL-3\cr
 LazyLoad: \tab yes\cr
 }
