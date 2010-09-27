@@ -1,15 +1,9 @@
 #library(futile.logger)
 #configLogger(threshold=DEBUG)
 #lg <- getLogger()
+# Probably don't need this any more
 paradigm.options <- OptionsManager('paradigm.options')
 
-# Registers function environments, which is necessary for proper handling
-# within packages that depend on futile.paradigm.
-register <- function(fn.name, where)
-{
-  paradigm.options(update=list(fn.name, where))
-  invisible()
-}
 
 # Adds guards to the base function for functional dispatching
 guard <- function(child.fn, condition, strict=TRUE)
@@ -17,6 +11,10 @@ guard <- function(child.fn, condition, strict=TRUE)
   child <- deparse(substitute(child.fn))
 
   expr <- deparse(substitute(condition))
+  # For debugging
+  #  cat("[From guard]\n")
+  #  cat("Parent: "); print(parent.frame())
+  #  cat("TopEnv: "); print(topenv(parent.frame()))
   if (length(grep('^(c\\()?function', expr, perl=TRUE)) < 1) 
     return(.guard(child, expr, strict, label='guard.xps'))
 
@@ -29,14 +27,25 @@ guard <- function(child.fn, condition, strict=TRUE)
 {
   parent <- sub('\\.[^.]+$','', child)
   where <- paradigm.options(parent)
-  if (is.null(where)) where <- -1
+  # For debugging
+  #  cat("[From .guard]\n")
+  #  cat("Parent: "); print(parent.frame(2))
+  #  cat("TopEnv: "); print(topenv(parent.frame(2)))
+
+  # We use 2 because this is called from within the 'guard' function so the
+  # stack is two down
+  if (is.null(where)) where <- topenv(parent.frame(2))
+  # This is only the frame and not the environment
+  #if (is.null(where)) where <- parent.frame(2)
+  # This doesn't work
+  #if (is.null(where)) where <- topenv(parent.frame())
 
   if (! exists(parent, where))
   {
     pattern <- 'function(...) UseFunction(\'%s\',...)'
     parent.def <- eval(parse(text=sprintf(pattern,parent)))
     #cat("Adding parent function",parent.def,"to",where,"\n")
-    assign(parent, parent.def, where, inherits=TRUE)
+    assign(parent, parent.def, where)
     #msg <- "Function %s has no visible parent function '%s'"
     #stop(sprintf(msg, child, parent))
   }
@@ -55,7 +64,7 @@ guard <- function(child.fn, condition, strict=TRUE)
     attr(fn, 'strict') <- ss
   }
 
-  assign(parent, fn, where, inherits=TRUE)
+  assign(parent, fn, where)
 
   invisible()
 }

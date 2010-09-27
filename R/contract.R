@@ -22,7 +22,9 @@ ensure <- function(child.fn, condition, strict=TRUE)
   
   parent <- sub('\\.[^.]+$','', child)
   where <- paradigm.options(parent)
-  if (is.null(where)) where <- -1
+  # We use 2 because this is called from within the 'ensure' function so the
+  # stack is two down
+  if (is.null(where)) where <- topenv(parent.frame(2))
 
   if (! exists(parent, where))
   {
@@ -44,7 +46,7 @@ ensure <- function(child.fn, condition, strict=TRUE)
     attr(fn, 'strict') <- ss
   }
 
-  assign(parent, fn, where, inherits=TRUE)
+  assign(parent, fn, where)
 
   invisible()
 }
