@@ -1,5 +1,8 @@
 exportPattern("^[[:alpha:]]+")
 export("%when%")
+export("%also%")
+export("%as%")
+export("%default%")
 export("%must%")
 export("%isa%")
 export("%hasa%")

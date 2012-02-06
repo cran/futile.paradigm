@@ -1,0 +1,17 @@
+ca6a85810d8f891fc011786baf3a45f0 *DESCRIPTION
+52f3edb0164cb338aaa398f75f37b43c *NAMESPACE
+a10ddd395c1f5c6d4c2f918f5389d540 *R/contract.R
+e9b144a1357c39b6f192ac94b6831c76 *R/crud.R
+b6572fd5f84894fb97dda5c44e62e85b *R/functional.R
+273f02656f8968009fdbb8704700ed4e *README.md
+cfdbf2de968a4c40452a3e48d1e6c706 *inst/unitTests/Makefile
+a10988cc5325623495448266b6d0cbf4 *inst/unitTests/runit.crud.R
+1ed9414f495e29ad41dfe9431e165c6f *inst/unitTests/runit.functional.R
+7ca369baf43651598adb80aa951ec33d *inst/unitTests/runit.util.R
+fe4bb91b1963479f0488d72e8f1165de *man/AbuseMethod.Rd
+1ef3e88a89ce35690326f82523a2694f *man/UseFunction.Rd
+8ef43637d211567b4ff2eeb86046ae89 *man/crud.Rd
+ca90446693df30461e9404a601dcd927 *man/ensure.Rd
+edab8ce122935afd65c965432fdca86b *man/futile.paradigm-package.Rd
+9b2f4be2b406f9cb5b75dccf9481d709 *man/guard.Rd
+d06492e77da39b9f49b8970ffc7ac937 *tests/doRUnit.R
